@@ -11,6 +11,10 @@ SIZE = (640, 480)  # (x, y)
 CENTER_RADIUS = 20
 THRESHOLD = 50
 CORRECT_VERTICAL_CAMERA = True  # Use this when camera is upside down only.
+RECORD_SECONDS = 30  # Number of seconds the video will last as maximum.
+SHOW_IMAGE = True  # View the camera.
+
+FOURCC = cv2.cv.CV_FOURCC(*'XVID')
 
 # Python libraries
 import time
@@ -283,7 +287,7 @@ def record_action(place, frame):
     Take a photo when a contour is centered for the first time.
     """
 
-    global contour_appeared, contour_centered
+    global contour_appeared, contour_centered, record_video
 
     # If there is not contour in the image
     if place == "":
@@ -294,8 +298,12 @@ def record_action(place, frame):
         contour_appeared = True
         print "A contour has appeared."
         # When the contour appears a photo is taken
-        appeared_txt = "appeared_%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
+        object_appeared = datetime.datetime.now()
+        appeared_txt = "appeared_%s.jpg" % object_appeared.strftime('%d%m-%H%M%S')
         cv2.imwrite(appeared_txt, frame)
+        # And video starts recording
+        record_video = "on"
+        video_writer = cv2.VideoWriter("detection%s.avi" %object_appeared, FOURCC, 59, SIZE)
     # A contour is centered
     elif not contour_centered and place == "x-center y-center":
         contour_centered = True
@@ -303,18 +311,33 @@ def record_action(place, frame):
         # When the contour appears a photo is taken
         centered_txt = "centered%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
         cv2.imwrite(centered_txt, frame)
+        record_video = "finish"
+    else:
+        print "The Object is lost."
+        record_video = "finish"
 
+    if record_video == "on":
+        if (datetime.datetime.now() - object_appeared).seconds >= RECORD_SECONDS:
+            # The video is recorded.
+            video_writer.write(frame)
+        else:
+            # The video finishes.
+            video_writer.release()
+    elif record_video == "finish":
+        # The video finishes.
+        video_writer.release()
 
 def camera_loop():
     """
     Main Loop where the Image processing takes part.
     """
-    global contour_appeared, contour_centered
+    global contour_appeared, contour_centered, record_video
     camera, stream = set_up_camera()
 
     # Global variables initialized.
     contour_appeared = False
     contour_centered = False
+    record_video = "off"
     while True:
         frame = capture_frame(camera, stream)
         if frame is None:
@@ -348,11 +371,12 @@ def camera_loop():
         # Takes photos and videos when contour is detected/centered.
         record_action(place, frame)
 
-        # Create coordinates and show them as lines.
-        frame = create_coordinates(frame)
-        lst = list()
-        lst.append((frame, "frame"))
-        show_images(lst, SIZE)
+        if SHOW_IMAGE:
+            # Create coordinates and show them as lines.
+            frame = create_coordinates(frame)
+            lst = list()
+            lst.append((frame, "frame"))
+            show_images(lst, SIZE)
         # cv2.imshow("frame", frame)
 
         if wait_key() == "break":
