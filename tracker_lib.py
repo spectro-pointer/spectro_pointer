@@ -304,7 +304,7 @@ def record_action(place, frame):
         cv2.imwrite(appeared_txt, frame)
         # And video starts recording
         record_video = "on"
-        video_writer = cv2.VideoWriter("detection%s.avi" % object_appeared, FOURCC, 59, SIZE)
+        video_writer = cv2.VideoWriter("detection%s.avi" % object_appeared, FOURCC, 20, SIZE)
     # A contour is centered
     elif not contour_centered and place == "x-center y-center":
         contour_centered = True
