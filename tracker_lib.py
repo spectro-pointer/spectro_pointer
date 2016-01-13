@@ -304,7 +304,7 @@ def record_action(place, frame):
         cv2.imwrite(appeared_txt, frame)
         # And video starts recording
         record_video = "on"
-        video_writer = cv2.VideoWriter("detection%s.avi" % object_appeared, FOURCC, 20, SIZE)
+        video_writer = cv2.VideoWriter("detection%s.avi" % object_appeared.strftime('%d%m-%H%M%S'), FOURCC, 20, SIZE)
     # A contour is centered
     elif not contour_centered and place == "x-center y-center":
         contour_centered = True
@@ -370,12 +370,14 @@ def camera_loop():
         # Returns the place where the contour is.
         place = check_quadrant(cx,cy)
 
+        # Create coordinates and show them as lines.
+        frame = create_coordinates(frame)
+
         # Takes photos and videos when contour is detected/centered.
         record_action(place, frame)
 
         if SHOW_IMAGE:
-            # Create coordinates and show them as lines.
-            frame = create_coordinates(frame)
+
             lst = list()
             lst.append((frame, "frame"))
             show_images(lst, SIZE)
