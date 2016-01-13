@@ -288,7 +288,7 @@ def record_action(place, frame):
     Take a photo when a contour is centered for the first time.
     """
 
-    global contour_appeared, contour_centered, record_video
+    global contour_appeared, contour_centered, record_video, object_appeared, video_writer
 
     # If there is not contour in the image
     if place == "":
