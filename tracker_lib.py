@@ -315,7 +315,7 @@ def record_action(place, frame):
         record_video = "finish"
 
     if record_video == "on":
-        if (datetime.datetime.now() - object_appeared).seconds >= RECORD_SECONDS:
+        if (datetime.datetime.now() - object_appeared).seconds <= RECORD_SECONDS:
             # The video is recorded.
             video_writer.write(frame)
         else:
