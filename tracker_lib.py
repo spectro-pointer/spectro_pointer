@@ -345,6 +345,9 @@ def camera_loop():
         # Returns the place where the contour is.
         place = check_quadrant(cx,cy)
 
+        # Takes photos and videos when contour is detected/centered.
+        record_action(place, frame)
+
         # Create coordinates and show them as lines.
         frame = create_coordinates(frame)
         lst = list()
