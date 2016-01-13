@@ -229,6 +229,7 @@ def check_quadrant(cx, cy):
         led_action(available_leds["LED_G_RIGHT"], "off")
         led_action(available_leds["LED_G_UP"], "off")
         led_action(available_leds["LED_G_DOWN"], "off")
+        led_action(available_leds["LED_RED"], "off")
         return result
     else:
         led_action(available_leds["LED_YELLOW"], "off")
@@ -268,7 +269,6 @@ def check_quadrant(cx, cy):
         led_action(available_leds["LED_G_UP"], "off")
         led_action(available_leds["LED_G_DOWN"], "on")
 
-    print result
     # A string is returned with the corresponding place where the contour was detected
     return result
 
