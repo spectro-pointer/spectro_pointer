@@ -320,9 +320,11 @@ def record_action(place, frame):
             video_writer.write(frame)
         else:
             # The video finishes.
+            print "The video has been saved."
             video_writer.release()
     elif record_video == "finish":
         # The video finishes.
+        print "The video has been saved."
         video_writer.release()
 
 def camera_loop():
