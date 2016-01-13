@@ -14,8 +14,6 @@ CORRECT_VERTICAL_CAMERA = True  # Use this when camera is upside down only.
 RECORD_SECONDS = 30  # Number of seconds the video will last as maximum.
 SHOW_IMAGE = True  # View the camera.
 
-FOURCC = cv2.cv.CV_FOURCC(*'XVID')
-
 # Python libraries
 import time
 import cv2
@@ -23,6 +21,9 @@ import numpy as np
 from os import listdir
 import sys
 import datetime
+
+
+FOURCC = cv2.cv.CV_FOURCC(*'XVID')
 
 if not RASPI:
     GPIO = None
