@@ -225,6 +225,10 @@ def check_quadrant(cx, cy):
     # It turns on LED_YELLOW and returns ""
     if cx < 0 or cy < 0:
         led_action(available_leds["LED_YELLOW"], "on")
+        led_action(available_leds["LED_G_LEFT"], "off")
+        led_action(available_leds["LED_G_RIGHT"], "off")
+        led_action(available_leds["LED_G_UP"], "off")
+        led_action(available_leds["LED_G_DOWN"], "off")
         return result
     else:
         led_action(available_leds["LED_YELLOW"], "off")
