@@ -313,9 +313,6 @@ def record_action(place, frame):
         centered_txt = "centered%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
         cv2.imwrite(centered_txt, frame)
         record_video = "finish"
-    else:
-        print "The Object is lost.", "place:", place
-        record_video = "finish"
 
     if record_video == "on":
         if (datetime.datetime.now() - object_appeared).seconds >= RECORD_SECONDS:
