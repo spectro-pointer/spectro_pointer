@@ -214,14 +214,23 @@ def check_quadrant(cx, cy):
 
     # print cx, cy
     result = ""
-    if cx < 0 or cy < 0:
-        return result
 
+    # When no contour has been detected:
+    # It turns on LED_YELLOW and returns ""
+    if cx < 0 or cy < 0:
+        led_action(available_leds["LED_YELLOW"], "on")
+        return result
+    else:
+        led_action(available_leds["LED_YELLOW"], "off")
+
+    # If the image is centered:
+    # It turns on LED_RED
     if abs(cx - SIZE[0]/2) < CENTER_RADIUS and abs(cy - SIZE[1]/2) < CENTER_RADIUS:
         led_action(available_leds["LED_RED"], "on")
     else:
         led_action(available_leds["LED_RED"], "off")
 
+    # Turns on green leds, when the contour is at the left / right
     if abs(cx - SIZE[0]/2) < CENTER_RADIUS:
         result = "x-center"
         led_action(available_leds["LED_G_LEFT"], "off")
@@ -235,18 +244,21 @@ def check_quadrant(cx, cy):
         led_action(available_leds["LED_G_LEFT"], "off")
         led_action(available_leds["LED_G_RIGHT"], "on")
 
+    # Turns on green leds, when the contour is up / down
     if abs(cy - SIZE[1]/2) < CENTER_RADIUS:
         result += " y-center"
         led_action(available_leds["LED_G_UP"], "off")
         led_action(available_leds["LED_G_DOWN"], "off")
     elif cy < SIZE[1]/2:
-        result += "up"
+        result += " up"
         led_action(available_leds["LED_G_UP"], "on")
         led_action(available_leds["LED_G_DOWN"], "off")
     elif cy > SIZE[1]/2:
-        result += "down"
+        result += " down"
         led_action(available_leds["LED_G_UP"], "off")
         led_action(available_leds["LED_G_DOWN"], "on")
+
+    # A string is returned with the corresponding place where the contour was detected
     return result
 
 
@@ -283,7 +295,7 @@ def camera_loop():
 
         #################### Image processing starts ###########################
 
-        # Change frame to grey.
+        # Change frame to grey color.
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # Apply Threshold.
@@ -295,8 +307,10 @@ def camera_loop():
 
         # Check in which quadrant the center of the contour is
         # And show it in the leds.
-        check_quadrant(cx,cy)
+        # Returns the place where the contour is.
+        place = check_quadrant(cx,cy)
 
+        print "place:", place
         # Create coordinates and show them as lines.
         frame = create_coordinates(frame)
         lst = list()
