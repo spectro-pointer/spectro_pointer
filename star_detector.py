@@ -6,7 +6,6 @@ __email__ = "pydev.ar@gmail.com"
 from tracker_lib import *
 
 
-# Test
 def main():
     set_up_leds()
     camera_loop()
