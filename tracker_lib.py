@@ -18,6 +18,7 @@ import cv2
 import numpy as np
 from os import listdir
 import sys
+import datetime
 
 if not RASPI:
     GPIO = None
@@ -275,11 +276,45 @@ def obtain_single_contour(b_frame):
             cx, cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
     return cx, cy
 
+
+def record_action(place, frame):
+    """
+    Take a photo when a contour is detected for the first time.
+    Take a photo when a contour is centered for the first time.
+    """
+
+    global contour_appeared, contour_centered
+
+    # If there is not contour in the image
+    if place == "":
+        contour_appeared = False
+        contour_centered = False
+    # A contour has appeared
+    elif not contour_appeared:
+        contour_appeared = True
+        print "A contour has appeared."
+        # When the contour appears a photo is taken
+        appeared_txt = "appeared_%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
+        cv2.imwrite(appeared_txt, frame)
+    # A contour is centered
+    elif not contour_centered and place == "x-center y-center":
+        contour_centered = True
+        print "A contour is centered."
+        # When the contour appears a photo is taken
+        centered_txt = "centered%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
+        cv2.imwrite(centered_txt, frame)
+
+
 def camera_loop():
     """
     Main Loop where the Image processing takes part.
     """
+    global contour_appeared, contour_centered
     camera, stream = set_up_camera()
+
+    # Global variables initialized.
+    contour_appeared = False
+    contour_centered = False
     while True:
         frame = capture_frame(camera, stream)
         if frame is None:
@@ -310,7 +345,6 @@ def camera_loop():
         # Returns the place where the contour is.
         place = check_quadrant(cx,cy)
 
-        print "place:", place
         # Create coordinates and show them as lines.
         frame = create_coordinates(frame)
         lst = list()
