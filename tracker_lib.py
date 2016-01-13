@@ -326,11 +326,13 @@ def record_action(place, frame):
         else:
             # The video finishes after 30 seconds.
             print "The video has been saved."
+            video_writer.write(frame)
             video_writer.release()
             record_video = "off"
     elif record_video == "finish":
         # The video finishes when it has been centered.
         print "The video has been saved."
+        video_writer.write(frame)
         video_writer.release()
         record_video = "off"
 
