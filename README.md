@@ -1,6 +1,6 @@
 # spectro_pointer
 # author = 'Nicolas Tomatis'
-# version = "Version 1.0"
+# version = "Version 1.1"
 # email = "pydev.ar@gmail.com"
 # To run this program as a pi user perform the following commands:
 xhost +
