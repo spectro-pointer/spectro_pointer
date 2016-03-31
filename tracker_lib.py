@@ -1,5 +1,5 @@
 __author__ = 'Nicolas Tomatis'
-__version__ = "Version 1.1"
+__version__ = "Version 1.2"
 __copyright__ = "Copyright 2015, PydevAr"
 __email__ = "pydev.ar@gmail.com"
 
@@ -11,14 +11,13 @@ SIZE = (640, 480)  # (x, y)
 CENTER_RADIUS = 20
 THRESHOLD = 50
 CORRECT_VERTICAL_CAMERA = True  # Use this when camera is upside down only.
+CORRECT_HORIZONTAL_CAMERA = True  # Use this when camera is showing mirrored image only.
 RECORD_SECONDS = 30  # Number of seconds the video will last as maximum.
 SHOW_IMAGE = True  # View the camera.
 
 # Python libraries
 import time
 import cv2
-import numpy as np
-from os import listdir
 import sys
 import datetime
 
@@ -354,8 +353,13 @@ def camera_loop():
             break
 
         if CORRECT_VERTICAL_CAMERA:
-            # To rotate image 180 degrees (only when necessary)
-            frame = cv2.flip(frame,0)
+            # To flip camera vertically (only when necessary)
+            frame = cv2.flip(frame, 0)
+
+        if CORRECT_HORIZONTAL_CAMERA:
+            # To flip camera horizontally (only when necessary)
+            frame = cv2.flip(frame, 1)
+
         original = frame.copy()
         # Shows current frame
         # cv2.imshow("original", original)
