@@ -1,6 +1,6 @@
 __author__ = 'Nicolas Tomatis'
-__version__ = "Version 1.1"
-__copyright__ = "Copyright 2015, PydevAr"
+__version__ = "Version 1.2"
+__copyright__ = "Copyright 2016, PydevAr"
 __email__ = "pydev.ar@gmail.com"
 
 from tracker_lib import *

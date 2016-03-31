@@ -1,18 +1,15 @@
 __author__ = 'Nicolas Tomatis'
 __version__ = "Version 1.2"
-__copyright__ = "Copyright 2015, PydevAr"
+__copyright__ = "Copyright 2016, PydevAr"
 __email__ = "pydev.ar@gmail.com"
 
+# Configuration options
+from config import *
+
 # Constants to be defined.
-DEBUG = False
-DEBUG_IMAGES = True
-RASPI = True  # True when used with a Raspberry, False for debug on PC.
-SIZE = (640, 480)  # (x, y)
-CENTER_RADIUS = 20
-THRESHOLD = 50
-CORRECT_VERTICAL_CAMERA = True  # Use this when camera is upside down only.
-CORRECT_HORIZONTAL_CAMERA = True  # Use this when camera is showing mirrored image only.
-RECORD_SECONDS = 30  # Number of seconds the video will last as maximum.
+DEBUG = False  # Use for developers.
+SIZE = (640, 480)  # Camera resolution in (x, y)
+
 SHOW_IMAGE = True  # View the camera.
 
 # Python libraries
