@@ -184,6 +184,12 @@ def create_coordinates(image):
     return image
 
 
+def show_center(image, cx, cy):
+
+    cv2.circle(image, (cx, cy), int(CENTER_RADIUS/4), (80, 200, 80), -1)
+    return image
+
+
 def camera_test():
     """
     This function is used only to test the Picamera of the Raspberry Pi Board
@@ -390,10 +396,15 @@ def camera_loop():
         # Check in which quadrant the center of the contour is
         # And show it in the leds.
         # Returns the place where the contour is.
-        place = check_quadrant(cx,cy)
+        place = check_quadrant(cx, cy)
 
         # Create coordinates and show them as lines.
         frame = create_coordinates(frame)
+
+        if SHOW_CENTER_CIRCLE:
+            # Show center of circle detected
+            frame = show_center(frame, cx, cy)
+
 
         # Takes photos and videos when contour is detected/centered.
         record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
