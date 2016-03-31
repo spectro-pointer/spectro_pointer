@@ -21,7 +21,7 @@ import datetime
 
 FOURCC = cv2.cv.CV_FOURCC(*'XVID')
 
-if not RASPI:
+if not USE_RASPBERRY:
     GPIO = None
 else:
     try:
@@ -43,7 +43,7 @@ def set_up_leds():
     """
     global available_leds
 
-    if RASPI:
+    if USE_RASPBERRY:
         # BCM convention is to be used.
         GPIO.setmode(GPIO.BCM)
 
@@ -59,7 +59,7 @@ def set_up_leds():
         "LED_G_UP": 22,
         "LED_G_DOWN": 17
     }
-    if RASPI:
+    if USE_RASPBERRY:
         for led in available_leds.values():
             if DEBUG:
                 print "led %i is configured as output" % led
@@ -79,7 +79,7 @@ def led_action(led, status):
         print "Led not found:", led
         return -1
 
-    if RASPI:
+    if USE_RASPBERRY:
         if status == "on":
             GPIO.output(led, GPIO.HIGH)
         elif status == "off":
@@ -283,10 +283,14 @@ def obtain_single_contour(b_frame):
     return cx, cy
 
 
-def record_action(place, frame):
+def record_action(place, frame, take_photo, take_video):
     """
     Take a photo when a contour is detected for the first time.
     Take a photo when a contour is centered for the first time.
+    Records a video for a limited time:
+        It starts when an object is found,
+        It finishes when the object is centered,
+        If it takes more than 30 seconds, the video is cut.
     """
 
     global contour_appeared, contour_centered, record_video, object_appeared, video_writer
@@ -299,38 +303,48 @@ def record_action(place, frame):
     elif not contour_appeared:
         contour_appeared = True
         print "A contour has appeared."
-        # When the contour appears a photo is taken
-        object_appeared = datetime.datetime.now()
-        appeared_txt = "appeared_%s.jpg" % object_appeared.strftime('%d%m-%H%M%S')
-        cv2.imwrite(appeared_txt, frame)
-        # And video starts recording
-        record_video = "on"
-        video_writer = cv2.VideoWriter("detection%s.avi" % object_appeared.strftime('%d%m-%H%M%S'), FOURCC, 20, SIZE)
+
+        if take_photo:  # The image is saved if it is explicitly told.
+            # When the contour appears a photo is taken
+            object_appeared = datetime.datetime.now()
+            appeared_txt = "appeared_%s.jpg" % object_appeared.strftime('%d%m-%H%M%S')
+            cv2.imwrite(appeared_txt, frame)
+
+        if take_video:  # The video is saved if it is explicitly told.
+            # And video starts recording
+            record_video = "on"
+            video_writer = cv2.VideoWriter("detection%s.avi" % object_appeared.strftime('%d%m-%H%M%S'), FOURCC, 20, SIZE)
+
     # A contour is centered
     elif not contour_centered and place == "x-center y-center":
         contour_centered = True
         print "A contour is centered."
-        # When the contour appears a photo is taken
-        centered_txt = "centered%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
-        cv2.imwrite(centered_txt, frame)
-        record_video = "finish"
 
-    if record_video == "on":
-        if (datetime.datetime.now() - object_appeared).seconds <= RECORD_SECONDS:
-            # The video is recorded.
-            video_writer.write(frame)
-        else:
-            # The video finishes after 30 seconds.
+        if take_photo:
+            # When the contour appears a photo is taken
+            centered_txt = "centered%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
+            cv2.imwrite(centered_txt, frame)
+
+        if take_video:
+            record_video = "finish"
+
+    if take_video:
+        if record_video == "on":
+            if (datetime.datetime.now() - object_appeared).seconds <= RECORD_SECONDS:
+                # The video is recorded.
+                video_writer.write(frame)
+            else:
+                # The video finishes after 30 seconds.
+                print "The video has been saved."
+                video_writer.write(frame)
+                video_writer.release()
+                record_video = "off"
+        elif record_video == "finish":
+            # The video finishes when it has been centered.
             print "The video has been saved."
             video_writer.write(frame)
             video_writer.release()
             record_video = "off"
-    elif record_video == "finish":
-        # The video finishes when it has been centered.
-        print "The video has been saved."
-        video_writer.write(frame)
-        video_writer.release()
-        record_video = "off"
 
 def camera_loop():
     """
@@ -382,7 +396,7 @@ def camera_loop():
         frame = create_coordinates(frame)
 
         # Takes photos and videos when contour is detected/centered.
-        record_action(place, frame)
+        record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
 
         if SHOW_IMAGE:
 
