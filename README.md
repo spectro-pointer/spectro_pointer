@@ -1,6 +1,6 @@
 # spectro_pointer
 # author = 'Nicolas Tomatis'
-# version = "Version 1.1"
+# version = "Version 1.2"
 # email = "pydev.ar@gmail.com"
 # To run this program as a pi user perform the following commands:
 xhost +
@@ -14,4 +14,5 @@ echo "workon cvr"
 # Now the environment has been set, run the script:
 
 # python program_name.py
+echo "The configuration file is config.py"
 sudo su
