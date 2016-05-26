@@ -308,18 +308,18 @@ def record_action(place, frame, take_photo, take_video):
     # A contour has appeared
     elif not contour_appeared:
         contour_appeared = True
+        object_appeared = datetime.datetime.now()
         print "A contour has appeared."
 
         if take_photo:  # The image is saved if it is explicitly told.
             # When the contour appears a photo is taken
-            object_appeared = datetime.datetime.now()
             appeared_txt = "appeared_%s.jpg" % object_appeared.strftime('%d%m-%H%M%S')
             cv2.imwrite(appeared_txt, frame)
 
         if take_video:  # The video is saved if it is explicitly told.
             # And video starts recording
             record_video = "on"
-            video_writer = cv2.VideoWriter("detection%s.avi" % object_appeared.strftime('%d%m-%H%M%S'), FOURCC, 20, SIZE)
+            video_writer = cv2.VideoWriter("detection_%s.avi" % object_appeared.strftime('%d%m-%H%M%S'), FOURCC, 20, SIZE)
 
     # A contour is centered
     elif not contour_centered and place == "x-center y-center":
