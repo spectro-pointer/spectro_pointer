@@ -1,5 +1,5 @@
 __author__ = 'Nicolas Tomatis'
-__version__ = "Version 1.2"
+__version__ = "Version 1.3"
 __copyright__ = "Copyright 2016, PydevAr"
 __email__ = "pydev.ar@gmail.com"
 

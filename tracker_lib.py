@@ -1,5 +1,5 @@
 __author__ = 'Nicolas Tomatis'
-__version__ = "Version 1.2"
+__version__ = "Version 1.3"
 __copyright__ = "Copyright 2016, PydevAr"
 __email__ = "pydev.ar@gmail.com"
 
@@ -313,13 +313,13 @@ def record_action(place, frame, take_photo, take_video):
 
         if take_photo:  # The image is saved if it is explicitly told.
             # When the contour appears a photo is taken
-            appeared_txt = "appeared_%s.jpg" % object_appeared.strftime('%d%m-%H%M%S')
+            appeared_txt = "appeared_%s.jpg" % object_appeared.strftime('%d%m%y-%H%M%S')
             cv2.imwrite(appeared_txt, frame)
 
         if take_video:  # The video is saved if it is explicitly told.
             # And video starts recording
             record_video = "on"
-            video_writer = cv2.VideoWriter("detection_%s.avi" % object_appeared.strftime('%d%m-%H%M%S'), FOURCC, 20, SIZE)
+            video_writer = cv2.VideoWriter("detection_%s.avi" % object_appeared.strftime('%d%m%y-%H%M%S'), FOURCC, 20, SIZE)
 
     # A contour is centered
     elif not contour_centered and place == "x-center y-center":
@@ -328,7 +328,7 @@ def record_action(place, frame, take_photo, take_video):
 
         if take_photo:
             # When the contour appears a photo is taken
-            centered_txt = "centered%s.jpg" % datetime.datetime.now().strftime('%d%m-%H%M%S')
+            centered_txt = "centered%s.jpg" % datetime.datetime.now().strftime('%d%m%y-%H%M%S')
             cv2.imwrite(centered_txt, frame)
 
         if take_video:
