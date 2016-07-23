@@ -460,7 +460,7 @@ def camera_loop():
 
             if time.time() - starting_time >= WAITING_SECONDS:
                 status = "recovering"
-            print "status is recovering"
+                print "status is recovering"
 
         if status == "recovering":
             if time.time() - starting_time >= WAITING_SECONDS * 2:
