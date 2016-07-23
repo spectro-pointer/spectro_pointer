@@ -467,6 +467,7 @@ def camera_loop():
                 if all_contours:
                     # If at least one contour is obtained
                     status = "tracking"
+                    print "status is tracking"
                     cx, cy = all_contours.pop(0)
                 else:
                     status = "idle"
