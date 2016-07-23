@@ -428,17 +428,16 @@ def camera_loop():
         frame = create_coordinates(frame)
 
         if status == "idle":
-            print "Status is idle."
             # Obtain multiple contours.
             all_contours = obtain_multiple_contour(b_frame.copy())
 
             if all_contours:
                 # If at least one contour is obtained
                 status = "tracking"
+                print "Status is tracking"
                 cx, cy = all_contours.pop(0)
 
         if status == "tracking":
-            print "Status is tracking"
             b_frame = mask_other_contours(b_frame, cx, cy)
             cx, cy = obtain_single_contour(b_frame)
             # Check in which quadrant the center of the contour is and show it in the leds.
@@ -446,25 +445,24 @@ def camera_loop():
             place = check_quadrant(cx, cy)
 
             # Takes photos and videos when contour is detected/centered.
+            frame = show_center(frame, cx, cy)
             record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
 
-            if SHOW_CENTER_CIRCLE:
-                # Show center of circle detected
-                frame = show_center(frame, cx, cy)
 
             if contour_centered:
                 status = "waiting"
+                print "status is waiting"
                 starting_time = time.time()
 
         if status == "waiting":
-            print "status is waiting"
+            frame = show_center(frame, cx, cy)
             record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
 
             if time.time() - starting_time >= WAITING_SECONDS:
                 status = "recovering"
+            print "status is recovering"
 
         if status == "recovering":
-            print "status is recovering"
             if time.time() - starting_time >= WAITING_SECONDS * 2:
                 if all_contours:
                     # If at least one contour is obtained
@@ -472,6 +470,7 @@ def camera_loop():
                     cx, cy = all_contours.pop(0)
                 else:
                     status = "idle"
+                    print "status is idle"
 
         if SHOW_IMAGE:
 
