@@ -11,7 +11,7 @@ USE_RASPBERRY = True
 CORRECT_VERTICAL_CAMERA = False
 # Use this when camera is upside down only. Options (True/False)
 
-CORRECT_HORIZONTAL_CAMERA = False
+CORRECT_HORIZONTAL_CAMERA = True
 # Use this when camera is showing mirrored image only. Options (True/False)
 
 # ------------------------- IMAGE CONFIGURATION ------------------------------- #
@@ -25,13 +25,19 @@ SHOW_CENTER_CIRCLE = True
 THRESHOLD = 50
 # Threshold of brightness of lights to be detected (Range 0: darkest - 255 brightest)
 
+MINIMUM_AREA = 100
+# Minimum area of spheres to detect
+
 # ---------------------------- OUTPUT FILES --------------------------------- #
-ENABLE_PHOTO = True
+ENABLE_PHOTO = False
 # When set to True, photos are taken when the object appears, and is centered.
 
-ENABLE_VIDEO = True
+ENABLE_VIDEO = False
 # When set to True, a video is taken starting when the object appears and finishes when the object
 # is centered. The video takes a limited times of seconds, if that time passes, the video is cut.
 
 RECORD_SECONDS = 30
 # Number of seconds the video will last as maximum.
+
+WAITING_SECONDS = 10
+# Number of seconds that the camera will stay centered

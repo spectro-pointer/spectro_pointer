@@ -18,7 +18,6 @@ import cv2
 import sys
 import datetime
 
-
 FOURCC = cv2.cv.CV_FOURCC(*'XVID')
 
 if not USE_RASPBERRY:
@@ -289,6 +288,39 @@ def obtain_single_contour(b_frame):
     return cx, cy
 
 
+def obtain_multiple_contour(b_frame):
+    """
+    Obtain the x and y coordinates of multiple contours.
+    When none is found, it returns: (-1, -1)
+    """
+    contours, _h = cv2.findContours(b_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5]
+    output = list()
+    for blob in contours:
+        M = cv2.moments(blob)
+        if M['m00'] > MINIMUM_AREA:
+            cx, cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
+            output.append((cx, cy))
+    return output
+
+
+def mask_other_contours(b_frame, cx, cy):
+    """
+    Given a binary image and its quadrant, returns the original image with other quadrants masked out.
+    """
+    if cx < SIZE[0] / 2:
+        cv2.rectangle(b_frame, (SIZE[0] / 2, 0), (SIZE[0], SIZE[1]), (0, 0, 0), -1)
+    else:
+        cv2.rectangle(b_frame, (0, 0), (SIZE[0] / 2, SIZE[1]), (0, 0, 0), -1)
+
+    if cy < SIZE[1] / 2:
+        cv2.rectangle(b_frame, (0, SIZE[1] / 2), (SIZE[0], SIZE[1]), (0, 0, 0), -1)
+    else:
+        cv2.rectangle(b_frame, (0, 0), (SIZE[0], SIZE[1] / 2), (0, 0, 0), -1)
+
+    return b_frame
+
+
 def record_action(place, frame, take_photo, take_video):
     """
     Take a photo when a contour is detected for the first time.
@@ -363,6 +395,8 @@ def camera_loop():
     contour_appeared = False
     contour_centered = False
     record_video = "off"
+    status = "idle"
+
     while True:
         frame = capture_frame(camera, stream)
         if frame is None:
@@ -390,24 +424,54 @@ def camera_loop():
         _dummy, b_frame = cv2.threshold(gray_frame, THRESHOLD, 255, cv2.THRESH_BINARY)
         # cv2.imshow("b_clone", b_frame)
 
-        # Obtain a single contour.
-        cx, cy = obtain_single_contour(b_frame)
-
-        # Check in which quadrant the center of the contour is
-        # And show it in the leds.
-        # Returns the place where the contour is.
-        place = check_quadrant(cx, cy)
-
         # Create coordinates and show them as lines.
         frame = create_coordinates(frame)
 
-        if SHOW_CENTER_CIRCLE:
-            # Show center of circle detected
-            frame = show_center(frame, cx, cy)
+        if status == "idle":
+            print "Status is idle."
+            # Obtain multiple contours.
+            all_contours = obtain_multiple_contour(b_frame.copy())
 
+            if all_contours:
+                # If at least one contour is obtained
+                status = "tracking"
+                cx, cy = all_contours.pop(0)
 
-        # Takes photos and videos when contour is detected/centered.
-        record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
+        if status == "tracking":
+            print "Status is tracking"
+            b_frame = mask_other_contours(b_frame, cx, cy)
+            cx, cy = obtain_single_contour(b_frame)
+            # Check in which quadrant the center of the contour is and show it in the leds.
+            # Returns the place where the contour is.
+            place = check_quadrant(cx, cy)
+
+            # Takes photos and videos when contour is detected/centered.
+            record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
+
+            if SHOW_CENTER_CIRCLE:
+                # Show center of circle detected
+                frame = show_center(frame, cx, cy)
+
+            if contour_centered:
+                status = "waiting"
+                starting_time = time.time()
+
+        if status == "waiting":
+            print "status is waiting"
+            record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
+
+            if time.time() - starting_time >= WAITING_SECONDS:
+                status = "recovering"
+
+        if status == "recovering":
+            print "status is recovering"
+            if time.time() - starting_time >= WAITING_SECONDS * 2:
+                if all_contours:
+                    # If at least one contour is obtained
+                    status = "tracking"
+                    cx, cy = all_contours.pop(0)
+                else:
+                    status = "idle"
 
         if SHOW_IMAGE:
 
