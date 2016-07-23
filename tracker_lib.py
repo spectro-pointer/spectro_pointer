@@ -470,8 +470,12 @@ def camera_loop():
                     print "status is tracking"
                     cx, cy = all_contours.pop(0)
                 else:
-                    status = "idle"
-                    print "status is idle"
+                    status = "scanning"
+                    print "status is scanning"
+
+        if status == "scanning":
+            # The scanning function should be defined here
+            pass
 
         if SHOW_IMAGE:
 

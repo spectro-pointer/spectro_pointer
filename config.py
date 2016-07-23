@@ -39,5 +39,5 @@ ENABLE_VIDEO = False
 RECORD_SECONDS = 30
 # Number of seconds the video will last as maximum.
 
-WAITING_SECONDS = 10
+WAITING_SECONDS = 5
 # Number of seconds that the camera will stay centered
