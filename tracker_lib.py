@@ -336,6 +336,7 @@ def record_action(place, frame, take_photo, take_video):
     # If there is not contour in the image
     if place == "":
         contour_appeared = False
+    if place != "x-center y-center":
         contour_centered = False
     # A contour has appeared
     elif not contour_appeared:
@@ -447,7 +448,6 @@ def camera_loop():
             # Takes photos and videos when contour is detected/centered.
             frame = show_center(frame, cx, cy)
             record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
-
 
             if contour_centered:
                 status = "waiting"
