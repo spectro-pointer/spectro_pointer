@@ -455,6 +455,8 @@ def camera_loop():
                 starting_time = time.time()
 
         if status == "waiting":
+            b_frame = mask_other_contours(b_frame, cx, cy)
+            cx, cy = obtain_single_contour(b_frame)
             frame = show_center(frame, cx, cy)
             record_action(place, frame, ENABLE_PHOTO, ENABLE_VIDEO)
 
