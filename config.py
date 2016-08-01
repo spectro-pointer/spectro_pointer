@@ -8,10 +8,10 @@ __email__ = "pydev.ar@gmail.com"
 USE_RASPBERRY = True
 # True when used with a Raspberry, False for debug on PC.
 
-CORRECT_VERTICAL_CAMERA = False
+CORRECT_VERTICAL_CAMERA = True
 # Use this when camera is upside down only. Options (True/False)
 
-CORRECT_HORIZONTAL_CAMERA = True
+CORRECT_HORIZONTAL_CAMERA = False
 # Use this when camera is showing mirrored image only. Options (True/False)
 
 # ------------------------- IMAGE CONFIGURATION ------------------------------- #
@@ -25,7 +25,7 @@ SHOW_CENTER_CIRCLE = True
 THRESHOLD = 50
 # Threshold of brightness of lights to be detected (Range 0: darkest - 255 brightest)
 
-MINIMUM_AREA = 100
+MINIMUM_AREA = 20
 # Minimum area of spheres to detect
 
 # ---------------------------- OUTPUT FILES --------------------------------- #
