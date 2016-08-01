@@ -8,10 +8,10 @@ __email__ = "pydev.ar@gmail.com"
 USE_RASPBERRY = True
 # True when used with a Raspberry, False for debug on PC.
 
-CORRECT_VERTICAL_CAMERA = True
+CORRECT_VERTICAL_CAMERA = False
 # Use this when camera is upside down only. Options (True/False)
 
-CORRECT_HORIZONTAL_CAMERA = True
+CORRECT_HORIZONTAL_CAMERA = False
 # Use this when camera is showing mirrored image only. Options (True/False)
 
 # ------------------------- IMAGE CONFIGURATION ------------------------------- #
