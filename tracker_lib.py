@@ -18,6 +18,7 @@ import cv2
 import sys
 import datetime
 
+
 FOURCC = cv2.cv.CV_FOURCC(*'XVID')
 
 if not USE_RASPBERRY:
